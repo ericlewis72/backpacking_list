@@ -1,0 +1,187 @@
+
+<style>
+  .checklist-root { padding: 1rem 0; font-family: var(--font-sans); }
+  .checklist-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+  .checklist-title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin: 0; }
+  .progress-bar-wrap { flex: 1; max-width: 260px; background: var(--color-background-secondary); border-radius: 99px; height: 8px; border: 0.5px solid var(--color-border-tertiary); }
+  .progress-bar { height: 100%; border-radius: 99px; background: #1D9E75; transition: width 0.3s; }
+  .progress-label { font-size: 13px; color: var(--color-text-secondary); white-space: nowrap; }
+  .reset-btn { font-size: 13px; padding: 5px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
+  .reset-btn:hover { background: var(--color-background-secondary); }
+  .section { margin-bottom: 1.25rem; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); overflow: hidden; }
+  .section-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); cursor: pointer; user-select: none; }
+  .section-icon { font-size: 17px; color: var(--color-text-secondary); }
+  .section-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+  .section-count { font-size: 12px; color: var(--color-text-tertiary); }
+  .section-toggle { font-size: 14px; color: var(--color-text-tertiary); transition: transform 0.2s; }
+  .section-toggle.open { transform: rotate(180deg); }
+  .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); padding: 8px 6px; gap: 2px; }
+  .item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--border-radius-md); cursor: pointer; transition: background 0.15s; }
+  .item:hover { background: var(--color-background-secondary); }
+  .item input[type=checkbox] { width: 16px; height: 16px; accent-color: #1D9E75; cursor: pointer; flex-shrink: 0; }
+  .item label { font-size: 13px; color: var(--color-text-primary); cursor: pointer; line-height: 1.4; }
+  .item.checked label { color: var(--color-text-tertiary); text-decoration: line-through; }
+  .item.optional label { font-style: italic; }
+  .optional-badge { font-size: 10px; color: var(--color-text-tertiary); border: 0.5px solid var(--color-border-tertiary); border-radius: 4px; padding: 1px 5px; flex-shrink: 0; }
+</style>
+
+<div class="checklist-root">
+  <h2 class="sr-only">Mild-weather backpacking checklist with checkboxes grouped by category</h2>
+  <div class="checklist-header">
+    <p class="checklist-title"><i class="ti ti-mountain" aria-hidden="true" style="margin-right:8px; font-size:18px; vertical-align:-2px;"></i>Mild-Weather Backpacking</p>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="pbar" style="width:0%"></div></div>
+      <span class="progress-label" id="plabel">0 / 0 packed</span>
+      <button class="reset-btn" onclick="resetAll()"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+    </div>
+  </div>
+  <div id="sections"></div>
+</div>
+
+<script>
+const data = [
+  {
+    name: "Clothing", icon: "ti-shirt",
+    items: [
+      {label:"Light shell jacket"}, {label:"Shell pants", optional:true}, {label:"Thermal short sleeves"},
+      {label:"Thermal long sleeve"}, {label:"Thermal pants"}, {label:"Socks"},
+      {label:"Hiking shorts"}, {label:"Underwear"}, {label:"Camp shoes"},
+      {label:"Under shorts (supportive)"}, {label:"Ball cap / sun hat"},
+      {label:"Bandana(s)"}, {label:"Chamois towel", optional:true},
+      {label:"Stuff sack with clothes"}
+    ]
+  },
+  {
+    name: "Shelter & Sleep", icon: "ti-tent",
+    items: [
+      {label:"Tent"}, {label:"Sleeping pad(s)"}, {label:"Sleeping bag"},
+      {label:"Ground blanket"}, {label:"Hammock"}, {label:"Trekking poles"}
+    ]
+  },
+  {
+    name: "Safety & Navigation", icon: "ti-first-aid-kit",
+    items: [
+      {label:"Whistle (included with pack)"}, {label:"First-aid kit / emergency blanket"},
+      {label:"Compass"}, {label:"Map"}, {label:"Head lamp"},
+      {label:"Spare laces", optional:true}, {label:"Rope for hanging food bag"}
+    ]
+  },
+  {
+    name: "Hygiene & Leave No Trace", icon: "ti-leaf",
+    items: [
+      {label:"Toilet paper"}, {label:"Trowel"}, {label:"Garbage bags"},
+      {label:"Zip-loc bags"}, {label:"Hand sanitizer"}, {label:"Wipes for cleaning"},
+      {label:"Tooth products"}, {label:"Deo (deodorant)"}, {label:"Rose water"},
+      {label:"Moisturizer"}
+    ]
+  },
+  {
+    name: "Sun, Bug & Skin", icon: "ti-sun",
+    items: [
+      {label:"Sunscreen"}, {label:"Bug spray"}, {label:"Lip balm"},
+      {label:"Sunglasses"}, {label:"Beach towel", optional:true}
+    ]
+  },
+  {
+    name: "Water", icon: "ti-droplet",
+    items: [
+      {label:"Water bottles / bladder"}, {label:"Water purification"},
+      {label:"Bladder (extra / backup)"}, {label:"Duct-taped Nalgene"}
+    ]
+  },
+  {
+    name: "Kitchen & Food", icon: "ti-tool-kitchen-2",
+    items: [
+      {label:"Jet Boil"}, {label:"Backup fuel cartridge"}, {label:"Titanium pots (as bowls)", optional:true},
+      {label:"Cook set", optional:true}, {label:"Sporks x2"}, {label:"Titanium cup"},
+      {label:"BH and porta-flask"}, {label:"Meals"}, {label:"Other food stuffs"},
+      {label:"Oysters / pulpo"}, {label:"Honey Stinger"}, {label:"Chocolate"},
+      {label:"Coffee"}, {label:"Wine key"}, {label:"Foil"},
+      {label:"Car cooler"}, {label:"Lighter / matches + fire starter"}
+    ]
+  },
+  {
+    name: "Health & Medicine", icon: "ti-pill",
+    items: [
+      {label:"Medicine"}, {label:"Delta-9 THC"}
+    ]
+  },
+  {
+    name: "Tech & Tools", icon: "ti-device-mobile",
+    items: [
+      {label:"Solar charger"}, {label:"Camera", optional:true}, {label:"Saw"},
+      {label:"Notebook"}
+    ]
+  },
+  {
+    name: "Entertainment & Misc", icon: "ti-cards",
+    items: [
+      {label:"Entertainment (cards, book, etc.)"}, {label:"Duct tape"}
+    ]
+  }
+];
+
+let checks = {};
+let collapsed = {};
+
+function totalItems() { return data.reduce((s,c)=>s+c.items.length,0); }
+function totalChecked() { return Object.values(checks).filter(Boolean).length; }
+
+function updateProgress() {
+  const total = totalItems(), done = totalChecked();
+  document.getElementById('pbar').style.width = (total ? (done/total*100) : 0) + '%';
+  document.getElementById('plabel').textContent = done + ' / ' + total + ' packed';
+}
+
+function render() {
+  const cont = document.getElementById('sections');
+  cont.innerHTML = '';
+  data.forEach((cat, ci) => {
+    const sec = document.createElement('div');
+    sec.className = 'section';
+    const isOpen = !collapsed[ci];
+    const done = cat.items.filter(it => checks[ci+'_'+cat.items.indexOf(it)]).length;
+    sec.innerHTML = `
+      <div class="section-header" onclick="toggleSection(${ci})">
+        <i class="ti ${cat.icon} section-icon" aria-hidden="true"></i>
+        <span class="section-name">${cat.name}</span>
+        <span class="section-count">${done}/${cat.items.length}</span>
+        <i class="ti ti-chevron-down section-toggle ${isOpen?'open':''}" aria-hidden="true"></i>
+      </div>
+      ${isOpen ? `<div class="items-grid">${cat.items.map((it,ii)=>{
+        const id = ci+'_'+ii;
+        const isChecked = !!checks[id];
+        return `<div class="item${isChecked?' checked':''}${it.optional?' optional':''}" onclick="toggle('${id}', this)">
+          <input type="checkbox" id="cb_${id}" ${isChecked?'checked':''} onclick="event.stopPropagation(); toggleById('${id}')">
+          <label for="cb_${id}">${it.label}</label>
+          ${it.optional?'<span class="optional-badge">optional</span>':''}
+        </div>`;
+      }).join('')}</div>` : ''}
+    `;
+    cont.appendChild(sec);
+  });
+  updateProgress();
+}
+
+function toggleSection(ci) {
+  collapsed[ci] = !collapsed[ci];
+  render();
+}
+
+function toggle(id, el) {
+  checks[id] = !checks[id];
+  render();
+}
+
+function toggleById(id) {
+  checks[id] = !checks[id];
+  render();
+}
+
+function resetAll() {
+  checks = {};
+  render();
+}
+
+render();
+</script>
