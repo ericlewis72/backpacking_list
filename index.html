@@ -1,122 +1,579 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trail Ready — Backpacking Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inconsolata:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  .checklist-root { padding: 1rem 0; font-family: var(--font-sans); }
-  .checklist-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
-  .checklist-title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin: 0; }
-  .progress-bar-wrap { flex: 1; max-width: 260px; background: var(--color-background-secondary); border-radius: 99px; height: 8px; border: 0.5px solid var(--color-border-tertiary); }
-  .progress-bar { height: 100%; border-radius: 99px; background: #1D9E75; transition: width 0.3s; }
-  .progress-label { font-size: 13px; color: var(--color-text-secondary); white-space: nowrap; }
-  .reset-btn { font-size: 13px; padding: 5px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
-  .reset-btn:hover { background: var(--color-background-secondary); }
-  .section { margin-bottom: 1.25rem; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); overflow: hidden; }
-  .section-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); cursor: pointer; user-select: none; }
-  .section-icon { font-size: 17px; color: var(--color-text-secondary); }
-  .section-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
-  .section-count { font-size: 12px; color: var(--color-text-tertiary); }
-  .section-toggle { font-size: 14px; color: var(--color-text-tertiary); transition: transform 0.2s; }
-  .section-toggle.open { transform: rotate(180deg); }
-  .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); padding: 8px 6px; gap: 2px; }
-  .item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--border-radius-md); cursor: pointer; transition: background 0.15s; }
-  .item:hover { background: var(--color-background-secondary); }
-  .item input[type=checkbox] { width: 16px; height: 16px; accent-color: #1D9E75; cursor: pointer; flex-shrink: 0; }
-  .item label { font-size: 13px; color: var(--color-text-primary); cursor: pointer; line-height: 1.4; }
-  .item.checked label { color: var(--color-text-tertiary); text-decoration: line-through; }
-  .item.optional label { font-style: italic; }
-  .optional-badge { font-size: 10px; color: var(--color-text-tertiary); border: 0.5px solid var(--color-border-tertiary); border-radius: 4px; padding: 1px 5px; flex-shrink: 0; }
-</style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<div class="checklist-root">
-  <h2 class="sr-only">Mild-weather backpacking checklist with checkboxes grouped by category</h2>
-  <div class="checklist-header">
-    <p class="checklist-title"><i class="ti ti-mountain" aria-hidden="true" style="margin-right:8px; font-size:18px; vertical-align:-2px;"></i>Mild-Weather Backpacking</p>
-    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-      <div class="progress-bar-wrap"><div class="progress-bar" id="pbar" style="width:0%"></div></div>
-      <span class="progress-label" id="plabel">0 / 0 packed</span>
-      <button class="reset-btn" onclick="resetAll()"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
-    </div>
+  :root {
+    --bg: #0d1710;
+    --bg2: #111f14;
+    --bg3: #162019;
+    --surface: #1a2b1d;
+    --surface2: #203325;
+    --border: rgba(90,140,80,0.18);
+    --border2: rgba(90,140,80,0.32);
+    --green: #5a8c50;
+    --green-bright: #7ab86e;
+    --green-pale: #a8d49c;
+    --gold: #c9a84c;
+    --gold-pale: #e2cc94;
+    --text: #d4e8cd;
+    --text2: #8fad88;
+    --text3: #506b4a;
+    --fog: rgba(13,23,16,0.85);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inconsolata', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Noise texture overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ── Hero Header ── */
+  .hero {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .hero svg.treeline {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .hero-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    padding: 2rem;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 0.75rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-title span {
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--text2);
+    margin-top: 0.9rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  /* ── Progress Bar ── */
+  .progress-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 2rem;
+    flex-wrap: wrap;
+  }
+
+  .progress-track {
+    flex: 1;
+    min-width: 140px;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--green-bright));
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--text2);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .progress-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--green-pale);
+    min-width: 46px;
+    text-align: right;
+  }
+
+  .reset-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text3);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 5px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .reset-btn:hover { color: var(--text2); border-color: var(--border2); }
+
+  /* ── Main Layout ── */
+  .main {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* ── Category Section ── */
+  .section {
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--surface);
+    opacity: 0;
+    transform: translateY(14px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  .section:nth-child(1) { animation-delay: 0.1s; }
+  .section:nth-child(2) { animation-delay: 0.17s; }
+  .section:nth-child(3) { animation-delay: 0.24s; }
+  .section:nth-child(4) { animation-delay: 0.31s; }
+  .section:nth-child(5) { animation-delay: 0.38s; }
+  .section:nth-child(6) { animation-delay: 0.45s; }
+  .section:nth-child(7) { animation-delay: 0.52s; }
+  .section:nth-child(8) { animation-delay: 0.59s; }
+  .section:nth-child(9) { animation-delay: 0.66s; }
+  .section:nth-child(10) { animation-delay: 0.73s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+    transition: background 0.2s;
+  }
+
+  .section-header:hover { background: var(--surface2); }
+
+  .section-icon {
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .section-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--text);
+    flex: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .section-tally {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    transition: color 0.3s;
+  }
+
+  .section-tally.complete { color: var(--green); }
+
+  .section-chevron {
+    font-size: 11px;
+    color: var(--text3);
+    transition: transform 0.25s;
+  }
+
+  .section-chevron.open { transform: rotate(180deg); }
+
+  /* ── Items Grid ── */
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    padding: 8px;
+    gap: 2px;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .item:hover { background: var(--surface2); }
+
+  /* Custom checkbox */
+  .item input[type=checkbox] { display: none; }
+
+  .cb-box {
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--text3);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .cb-box::after {
+    content: '';
+    width: 8px;
+    height: 5px;
+    border-left: 1.5px solid var(--bg);
+    border-bottom: 1.5px solid var(--bg);
+    transform: rotate(-45deg) translateY(-1px);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .item.checked .cb-box {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .item.checked .cb-box::after { opacity: 1; }
+
+  .item-label {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.45;
+    transition: color 0.2s;
+  }
+
+  .item.checked .item-label {
+    color: var(--text3);
+    text-decoration: line-through;
+    text-decoration-color: var(--text3);
+  }
+
+  .opt-tag {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 2px;
+    padding: 1px 5px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 2rem 1rem 3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-trees {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 1rem;
+    opacity: 0.25;
+  }
+
+  .footer-text {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 540px) {
+    .items-grid { grid-template-columns: 1fr 1fr; }
+    .hero-content { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <svg class="treeline" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <!-- Sky gradient -->
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#060e08"/>
+        <stop offset="60%" stop-color="#0d1a10"/>
+        <stop offset="100%" stop-color="#122016"/>
+      </linearGradient>
+      <linearGradient id="moon-glow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%" gradientUnits="objectBoundingBox" id="mg">
+        <stop offset="0%" stop-color="#e2d8a0" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#e2d8a0" stop-opacity="0"/>
+      </linearGradient>
+      <radialGradient id="mg" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#e2d8b0" stop-opacity="0.22"/>
+        <stop offset="100%" stop-color="#e2d8b0" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="1440" height="320" fill="url(#sky)"/>
+
+    <!-- Moon glow -->
+    <ellipse cx="1100" cy="60" rx="90" ry="90" fill="url(#mg)"/>
+    <!-- Moon -->
+    <circle cx="1100" cy="60" r="22" fill="#e8dfa8" opacity="0.9"/>
+    <circle cx="1108" cy="54" r="17" fill="#0a1509" opacity="0.85"/>
+
+    <!-- Stars -->
+    <g fill="#c8d8b0" opacity="0.7">
+      <circle cx="120" cy="30" r="1.2"/><circle cx="240" cy="18" r="0.9"/>
+      <circle cx="380" cy="42" r="1.1"/><circle cx="510" cy="12" r="0.8"/>
+      <circle cx="640" cy="28" r="1.3"/><circle cx="760" cy="8" r="0.9"/>
+      <circle cx="890" cy="36" r="1.0"/><circle cx="980" cy="20" r="1.2"/>
+      <circle cx="1200" cy="35" r="0.9"/><circle cx="1310" cy="15" r="1.1"/>
+      <circle cx="1380" cy="44" r="0.8"/><circle cx="60" cy="55" r="0.7"/>
+      <circle cx="460" cy="55" r="0.8"/><circle cx="820" cy="48" r="1.0"/>
+    </g>
+
+    <!-- Distant mountains -->
+    <polygon points="0,220 180,110 360,180 520,90 700,160 860,80 1040,150 1220,70 1440,140 1440,320 0,320" fill="#0c1a0f" opacity="0.9"/>
+
+    <!-- Mid mountains -->
+    <polygon points="0,260 120,180 280,230 440,155 600,210 760,148 940,200 1100,145 1260,195 1440,155 1440,320 0,320" fill="#0f1f12"/>
+
+    <!-- Tree line — back row -->
+    <g fill="#0e1c11">
+      <!-- Spruces -->
+      <polygon points="0,320 30,240 60,320"/>
+      <polygon points="15,320 30,255 45,320"/>
+      <polygon points="50,320 80,235 110,320"/>
+      <polygon points="65,320 80,250 95,320"/>
+      <polygon points="100,320 132,228 164,320"/>
+      <polygon points="155,320 185,240 215,320"/>
+      <polygon points="205,320 240,222 275,320"/>
+      <polygon points="265,320 300,235 335,320"/>
+      <polygon points="320,320 358,218 396,320"/>
+      <polygon points="385,320 420,232 455,320"/>
+      <polygon points="445,320 482,220 519,320"/>
+      <polygon points="508,320 545,230 582,320"/>
+      <polygon points="570,320 608,215 646,320"/>
+      <polygon points="635,320 672,228 709,320"/>
+      <polygon points="700,320 736,220 772,320"/>
+      <polygon points="760,320 798,212 836,320"/>
+      <polygon points="825,320 862,225 899,320"/>
+      <polygon points="888,320 926,215 964,320"/>
+      <polygon points="950,320 989,228 1028,320"/>
+      <polygon points="1015,320 1054,218 1093,320"/>
+      <polygon points="1080,320 1120,210 1160,320"/>
+      <polygon points="1148,320 1188,222 1228,320"/>
+      <polygon points="1215,320 1256,215 1297,320"/>
+      <polygon points="1282,320 1324,220 1366,320"/>
+      <polygon points="1350,320 1395,210 1440,320"/>
+    </g>
+
+    <!-- Tree line — front row (darker, taller) -->
+    <g fill="#0a1509">
+      <polygon points="0,320 40,225 80,320"/>
+      <polygon points="20,320 40,240 60,320"/>
+      <polygon points="70,320 112,210 154,320"/>
+      <polygon points="90,320 112,228 134,320"/>
+      <polygon points="140,320 182,200 224,320"/>
+      <polygon points="212,320 258,192 304,320"/>
+      <polygon points="290,320 338,202 386,320"/>
+      <polygon points="368,320 416,195 464,320"/>
+      <polygon points="445,320 496,188 547,320"/>
+      <polygon points="525,320 576,196 627,320"/>
+      <polygon points="605,320 658,185 711,320"/>
+      <polygon points="688,320 742,192 796,320"/>
+      <polygon points="772,320 828,180 884,320"/>
+      <polygon points="856,320 912,188 968,320"/>
+      <polygon points="940,320 998,178 1056,320"/>
+      <polygon points="1028,320 1086,185 1144,320"/>
+      <polygon points="1116,320 1175,175 1234,320"/>
+      <polygon points="1206,320 1266,182 1326,320"/>
+      <polygon points="1298,320 1358,175 1418,320"/>
+      <polygon points="1380,320 1440,180 1440,320"/>
+    </g>
+
+    <!-- Ground fog -->
+    <ellipse cx="720" cy="320" rx="900" ry="40" fill="#0d1a10" opacity="0.7"/>
+  </svg>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Mild-Weather</p>
+    <h1 class="hero-title">Trail <span>Ready</span></h1>
+    <p class="hero-sub">Backpacking Checklist</p>
   </div>
-  <div id="sections"></div>
 </div>
+
+<!-- ══ PROGRESS ══ -->
+<div class="progress-wrap">
+  <div class="progress-track">
+    <div class="progress-fill" id="pbar"></div>
+  </div>
+  <span class="progress-pct" id="ppct">0%</span>
+  <span class="progress-label" id="plabel">0 / 0 items packed</span>
+  <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
+</div>
+
+<!-- ══ CHECKLIST ══ -->
+<main class="main" id="sections"></main>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <svg class="footer-trees" viewBox="0 0 500 80" xmlns="http://www.w3.org/2000/svg">
+    <g fill="#3a6040">
+      <polygon points="0,80 25,30 50,80"/><polygon points="10,80 25,42 40,80"/>
+      <polygon points="40,80 68,22 96,80"/><polygon points="52,80 68,36 84,80"/>
+      <polygon points="90,80 120,18 150,80"/><polygon points="104,80 120,32 136,80"/>
+      <polygon points="148,80 178,24 208,80"/><polygon points="162,80 178,38 194,80"/>
+      <polygon points="310,80 340,24 370,80"/><polygon points="324,80 340,38 356,80"/>
+      <polygon points="362,80 394,18 426,80"/><polygon points="378,80 394,32 410,80"/>
+      <polygon points="416,80 448,22 480,80"/><polygon points="432,80 448,36 464,80"/>
+      <polygon points="468,80 500,28 500,80"/>
+    </g>
+  </svg>
+  <p class="footer-text">Leave no trace &nbsp;·&nbsp; Pack it in, pack it out</p>
+</footer>
 
 <script>
 const data = [
-  {
-    name: "Clothing", icon: "ti-shirt",
+  { name: "Clothing", icon: "👕",
     items: [
-      {label:"Light shell jacket"}, {label:"Shell pants", optional:true}, {label:"Thermal short sleeves"},
-      {label:"Thermal long sleeve"}, {label:"Thermal pants"}, {label:"Socks"},
-      {label:"Hiking shorts"}, {label:"Underwear"}, {label:"Camp shoes"},
-      {label:"Under shorts (supportive)"}, {label:"Ball cap / sun hat"},
-      {label:"Bandana(s)"}, {label:"Chamois towel", optional:true},
-      {label:"Stuff sack with clothes"}
+      {l:"Light shell jacket"},{l:"Shell pants",o:true},{l:"Thermal short sleeves"},
+      {l:"Thermal long sleeve"},{l:"Thermal pants"},{l:"Socks"},
+      {l:"Hiking shorts"},{l:"Underwear"},{l:"Camp shoes"},
+      {l:"Under shorts (supportive)"},{l:"Ball cap / sun hat"},
+      {l:"Bandana(s)"},{l:"Chamois towel",o:true},{l:"Stuff sack with clothes"}
     ]
   },
-  {
-    name: "Shelter & Sleep", icon: "ti-tent",
+  { name: "Shelter & Sleep", icon: "⛺",
     items: [
-      {label:"Tent"}, {label:"Sleeping pad(s)"}, {label:"Sleeping bag"},
-      {label:"Ground blanket"}, {label:"Hammock"}, {label:"Trekking poles"}
+      {l:"Tent"},{l:"Sleeping pad(s)"},{l:"Sleeping bag"},
+      {l:"Ground blanket"},{l:"Hammock"},{l:"Trekking poles"}
     ]
   },
-  {
-    name: "Safety & Navigation", icon: "ti-first-aid-kit",
+  { name: "Safety & Navigation", icon: "🧭",
     items: [
-      {label:"Whistle (included with pack)"}, {label:"First-aid kit / emergency blanket"},
-      {label:"Compass"}, {label:"Map"}, {label:"Head lamp"},
-      {label:"Spare laces", optional:true}, {label:"Rope for hanging food bag"}
+      {l:"Whistle (included with pack)"},{l:"First-aid kit / emergency blanket"},
+      {l:"Compass"},{l:"Map"},{l:"Head lamp"},
+      {l:"Spare laces",o:true},{l:"Rope for hanging food bag"}
     ]
   },
-  {
-    name: "Hygiene & Leave No Trace", icon: "ti-leaf",
+  { name: "Hygiene & Leave No Trace", icon: "🌿",
     items: [
-      {label:"Toilet paper"}, {label:"Trowel"}, {label:"Garbage bags"},
-      {label:"Zip-loc bags"}, {label:"Hand sanitizer"}, {label:"Wipes for cleaning"},
-      {label:"Tooth products"}, {label:"Deo (deodorant)"}, {label:"Rose water"},
-      {label:"Moisturizer"}
+      {l:"Toilet paper"},{l:"Trowel"},{l:"Garbage bags"},
+      {l:"Zip-loc bags"},{l:"Hand sanitizer"},{l:"Wipes for cleaning"},
+      {l:"Tooth products"},{l:"Deodorant"},{l:"Rose water"},
+      {l:"Moisturizer"}
     ]
   },
-  {
-    name: "Sun, Bug & Skin", icon: "ti-sun",
+  { name: "Sun, Bug & Skin", icon: "☀️",
     items: [
-      {label:"Sunscreen"}, {label:"Bug spray"}, {label:"Lip balm"},
-      {label:"Sunglasses"}, {label:"Beach towel", optional:true}
+      {l:"Sunscreen"},{l:"Bug spray"},{l:"Lip balm"},
+      {l:"Sunglasses"},{l:"Beach towel",o:true}
     ]
   },
-  {
-    name: "Water", icon: "ti-droplet",
+  { name: "Water", icon: "💧",
     items: [
-      {label:"Water bottles / bladder"}, {label:"Water purification"},
-      {label:"Bladder (extra / backup)"}, {label:"Duct-taped Nalgene"}
+      {l:"Water bottles / bladder"},{l:"Water purification"},
+      {l:"Backup bladder"},{l:"Duct-taped Nalgene"}
     ]
   },
-  {
-    name: "Kitchen & Food", icon: "ti-tool-kitchen-2",
+  { name: "Kitchen & Food", icon: "🔥",
     items: [
-      {label:"Jet Boil"}, {label:"Backup fuel cartridge"}, {label:"Titanium pots (as bowls)", optional:true},
-      {label:"Cook set", optional:true}, {label:"Sporks x2"}, {label:"Titanium cup"},
-      {label:"BH and porta-flask"}, {label:"Meals"}, {label:"Other food stuffs"},
-      {label:"Oysters / pulpo"}, {label:"Honey Stinger"}, {label:"Chocolate"},
-      {label:"Coffee"}, {label:"Wine key"}, {label:"Foil"},
-      {label:"Car cooler"}, {label:"Lighter / matches + fire starter"}
+      {l:"Jet Boil"},{l:"Backup fuel cartridge"},{l:"Titanium pots",o:true},
+      {l:"Cook set",o:true},{l:"Sporks ×2"},{l:"Titanium cup"},
+      {l:"BH and porta-flask"},{l:"Meals"},{l:"Other food stuffs"},
+      {l:"Oysters / pulpo"},{l:"Honey Stinger"},{l:"Chocolate"},
+      {l:"Coffee"},{l:"Wine key"},{l:"Foil"},
+      {l:"Car cooler"},{l:"Lighter / matches + fire starter"}
     ]
   },
-  {
-    name: "Health & Medicine", icon: "ti-pill",
+  { name: "Health & Medicine", icon: "💊",
     items: [
-      {label:"Medicine"}, {label:"Delta-9 THC"}
+      {l:"Medicine"},{l:"Delta-9 THC"}
     ]
   },
-  {
-    name: "Tech & Tools", icon: "ti-device-mobile",
+  { name: "Tech & Tools", icon: "🔦",
     items: [
-      {label:"Solar charger"}, {label:"Camera", optional:true}, {label:"Saw"},
-      {label:"Notebook"}
+      {l:"Solar charger"},{l:"Camera",o:true},{l:"Saw"},{l:"Notebook"}
     ]
   },
-  {
-    name: "Entertainment & Misc", icon: "ti-cards",
+  { name: "Entertainment & Misc", icon: "🃏",
     items: [
-      {label:"Entertainment (cards, book, etc.)"}, {label:"Duct tape"}
+      {l:"Entertainment (cards, book, etc.)"},{l:"Duct tape"}
     ]
   }
 ];
@@ -129,32 +586,39 @@ function totalChecked() { return Object.values(checks).filter(Boolean).length; }
 
 function updateProgress() {
   const total = totalItems(), done = totalChecked();
-  document.getElementById('pbar').style.width = (total ? (done/total*100) : 0) + '%';
-  document.getElementById('plabel').textContent = done + ' / ' + total + ' packed';
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('ppct').textContent = pct + '%';
+  document.getElementById('plabel').textContent = done + ' / ' + total + ' items packed';
 }
 
 function render() {
   const cont = document.getElementById('sections');
   cont.innerHTML = '';
   data.forEach((cat, ci) => {
+    const isOpen = !collapsed[ci];
+    const done = cat.items.filter((_,ii) => checks[ci+'_'+ii]).length;
+    const allDone = done === cat.items.length;
+
     const sec = document.createElement('div');
     sec.className = 'section';
-    const isOpen = !collapsed[ci];
-    const done = cat.items.filter(it => checks[ci+'_'+cat.items.indexOf(it)]).length;
+    sec.style.animationDelay = (0.08 + ci * 0.07) + 's';
+
     sec.innerHTML = `
       <div class="section-header" onclick="toggleSection(${ci})">
-        <i class="ti ${cat.icon} section-icon" aria-hidden="true"></i>
+        <span class="section-icon">${cat.icon}</span>
         <span class="section-name">${cat.name}</span>
-        <span class="section-count">${done}/${cat.items.length}</span>
-        <i class="ti ti-chevron-down section-toggle ${isOpen?'open':''}" aria-hidden="true"></i>
+        <span class="section-tally${allDone?' complete':''}">${done}/${cat.items.length}</span>
+        <span class="section-chevron${isOpen?' open':''}">▼</span>
       </div>
       ${isOpen ? `<div class="items-grid">${cat.items.map((it,ii)=>{
         const id = ci+'_'+ii;
-        const isChecked = !!checks[id];
-        return `<div class="item${isChecked?' checked':''}${it.optional?' optional':''}" onclick="toggle('${id}', this)">
-          <input type="checkbox" id="cb_${id}" ${isChecked?'checked':''} onclick="event.stopPropagation(); toggleById('${id}')">
-          <label for="cb_${id}">${it.label}</label>
-          ${it.optional?'<span class="optional-badge">optional</span>':''}
+        const checked = !!checks[id];
+        return `<div class="item${checked?' checked':''}" onclick="toggle('${id}')">
+          <input type="checkbox" ${checked?'checked':''}>
+          <div class="cb-box"></div>
+          <span class="item-label">${it.l}</span>
+          ${it.o?'<span class="opt-tag">opt</span>':''}
         </div>`;
       }).join('')}</div>` : ''}
     `;
@@ -168,20 +632,19 @@ function toggleSection(ci) {
   render();
 }
 
-function toggle(id, el) {
-  checks[id] = !checks[id];
-  render();
-}
-
-function toggleById(id) {
+function toggle(id) {
   checks[id] = !checks[id];
   render();
 }
 
 function resetAll() {
-  checks = {};
-  render();
+  if (confirm('Reset all items?')) {
+    checks = {};
+    render();
+  }
 }
 
 render();
 </script>
+</body>
+</html>
