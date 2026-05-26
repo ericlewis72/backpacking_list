@@ -4,10 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trail Ready — Backpacking Checklist</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inconsolata:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inconsolata:wght@300;400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ════════════════════════════════
+     DESKTOP — dark forest
+  ════════════════════════════════ */
   :root {
     --bg: #0d1710;
     --bg2: #111f14;
@@ -20,11 +23,9 @@
     --green-bright: #7ab86e;
     --green-pale: #a8d49c;
     --gold: #c9a84c;
-    --gold-pale: #e2cc94;
     --text: #d4e8cd;
     --text2: #8fad88;
     --text3: #506b4a;
-    --fog: rgba(13,23,16,0.85);
   }
 
   html { scroll-behavior: smooth; }
@@ -37,7 +38,6 @@
     overflow-x: hidden;
   }
 
-  /* ── Noise texture overlay ── */
   body::before {
     content: '';
     position: fixed;
@@ -48,321 +48,299 @@
     opacity: 0.6;
   }
 
-  /* ── Hero Header ── */
-  .hero {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    padding: 0;
-  }
 
-  .hero svg.treeline {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+  /* ── Dual hero visibility ── */
+  .mobile-hero { display: none; }
+  .desktop-hero { display: block; }
 
+  @media (max-width: 640px) {
+    .mobile-hero { display: block; }
+    .desktop-hero { display: none; }
+    /* Title readable on light dawn sky */
+    .hero-eyebrow { color: #2a6b38 !important; font-weight: 600; letter-spacing: 0.3em; text-shadow: none; }
+    .hero-title { color: #1a2e1a !important; text-shadow: 0 1px 3px rgba(255,255,255,0.4); }
+    .hero-title span { color: #7a4f10 !important; }
+    .hero-sub { color: #3a5a3a !important; font-weight: 500; }
+  }
+  /* ── Hero ── */
+  .hero { position: relative; width: 100%; overflow: hidden; }
+  .hero svg.treeline { display: block; width: 100%; height: auto; }
   .hero-content {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    padding: 2rem;
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 2; padding: 2rem;
   }
-
   .hero-eyebrow {
-    font-family: 'Inconsolata', monospace;
-    font-size: 11px;
-    font-weight: 300;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 0.75rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.3s forwards;
+    font-size: 11px; font-weight: 300; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--green); margin-bottom: 0.75rem;
+    opacity: 0; animation: fadeUp 0.8s 0.3s forwards;
   }
-
   .hero-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 5vw, 4rem);
-    font-weight: 600;
-    color: var(--text);
-    text-align: center;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.5s forwards;
+    font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 600;
+    color: var(--text); text-align: center; line-height: 1.15;
+    opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6);
   }
-
-  .hero-title span {
-    color: var(--gold);
-  }
-
+  .hero-title span { color: var(--gold); }
   .hero-sub {
-    font-size: 12px;
-    letter-spacing: 0.18em;
-    color: var(--text2);
-    margin-top: 0.9rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.7s forwards;
+    font-size: 12px; letter-spacing: 0.18em; color: var(--text2); margin-top: 0.9rem;
+    opacity: 0; animation: fadeUp 0.8s 0.7s forwards;
   }
 
-  /* ── Progress Bar ── */
+  /* ── Progress ── */
   .progress-wrap {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    position: relative; z-index: 2;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
     background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     padding: 14px 2rem;
-    flex-wrap: wrap;
   }
-
   .progress-track {
-    flex: 1;
-    min-width: 140px;
-    height: 4px;
-    background: var(--bg3);
-    border-radius: 99px;
-    overflow: hidden;
+    flex: 1; min-width: 140px; height: 4px;
+    background: var(--bg3); border-radius: 99px; overflow: hidden;
   }
-
   .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--green), var(--green-bright));
-    border-radius: 99px;
-    transition: width 0.4s cubic-bezier(.4,0,.2,1);
-    width: 0%;
+    height: 100%; background: linear-gradient(90deg, var(--green), var(--green-bright));
+    border-radius: 99px; transition: width 0.4s cubic-bezier(.4,0,.2,1); width: 0%;
   }
-
-  .progress-label {
-    font-size: 12px;
-    color: var(--text2);
-    letter-spacing: 0.1em;
-    white-space: nowrap;
-  }
-
-  .progress-pct {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: var(--green-pale);
-    min-width: 46px;
-    text-align: right;
-  }
-
+  .progress-label { font-size: 12px; color: var(--text2); letter-spacing: 0.1em; white-space: nowrap; }
+  .progress-pct { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--green-pale); min-width: 46px; text-align: right; }
   .reset-btn {
-    font-family: 'Inconsolata', monospace;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text3);
-    background: transparent;
-    border: 1px solid var(--border);
-    padding: 5px 14px;
-    border-radius: 3px;
-    cursor: pointer;
+    font-family: 'Inconsolata', monospace; font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text3); background: transparent;
+    border: 1px solid var(--border); padding: 5px 14px; border-radius: 3px; cursor: pointer;
     transition: color 0.2s, border-color 0.2s;
   }
-
   .reset-btn:hover { color: var(--text2); border-color: var(--border2); }
 
-  /* ── Main Layout ── */
-  .main {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem 4rem;
-  }
+  /* ── Main ── */
+  .main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
-  /* ── Category Section ── */
+  /* ── Sections ── */
   .section {
-    margin-bottom: 1.25rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    background: var(--surface);
-    opacity: 0;
-    transform: translateY(14px);
-    animation: fadeUp 0.5s forwards;
+    margin-bottom: 1.25rem; border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--surface);
+    opacity: 0; transform: translateY(14px); animation: fadeUp 0.5s forwards;
   }
-
-  .section:nth-child(1) { animation-delay: 0.1s; }
-  .section:nth-child(2) { animation-delay: 0.17s; }
-  .section:nth-child(3) { animation-delay: 0.24s; }
-  .section:nth-child(4) { animation-delay: 0.31s; }
-  .section:nth-child(5) { animation-delay: 0.38s; }
-  .section:nth-child(6) { animation-delay: 0.45s; }
-  .section:nth-child(7) { animation-delay: 0.52s; }
-  .section:nth-child(8) { animation-delay: 0.59s; }
-  .section:nth-child(9) { animation-delay: 0.66s; }
-  .section:nth-child(10) { animation-delay: 0.73s; }
+  .section:nth-child(1){animation-delay:0.10s} .section:nth-child(2){animation-delay:0.17s}
+  .section:nth-child(3){animation-delay:0.24s} .section:nth-child(4){animation-delay:0.31s}
+  .section:nth-child(5){animation-delay:0.38s} .section:nth-child(6){animation-delay:0.45s}
+  .section:nth-child(7){animation-delay:0.52s} .section:nth-child(8){animation-delay:0.59s}
+  .section:nth-child(9){animation-delay:0.66s} .section:nth-child(10){animation-delay:0.73s}
 
   .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    cursor: pointer;
-    user-select: none;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg3);
-    transition: background 0.2s;
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    cursor: pointer; user-select: none;
+    border-bottom: 1px solid var(--border); background: var(--bg3); transition: background 0.2s;
   }
-
   .section-header:hover { background: var(--surface2); }
-
-  .section-icon {
-    font-size: 18px;
-    width: 22px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .section-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    color: var(--text);
-    flex: 1;
-    letter-spacing: 0.01em;
-  }
-
-  .section-tally {
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.12em;
-    transition: color 0.3s;
-  }
-
+  .section-icon { font-size: 18px; width: 22px; text-align: center; flex-shrink: 0; }
+  .section-name { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--text); flex: 1; }
+  .section-tally { font-size: 11px; color: var(--text3); letter-spacing: 0.12em; transition: color 0.3s; }
   .section-tally.complete { color: var(--green); }
-
-  .section-chevron {
-    font-size: 11px;
-    color: var(--text3);
-    transition: transform 0.25s;
-  }
-
+  .section-chevron { font-size: 11px; color: var(--text3); transition: transform 0.25s; }
   .section-chevron.open { transform: rotate(180deg); }
 
   /* ── Items Grid ── */
-  .items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    padding: 8px;
-    gap: 2px;
-  }
+  .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); padding: 8px; gap: 2px; }
 
   .item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.15s;
-    position: relative;
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 10px; border-radius: 4px; cursor: pointer; transition: background 0.15s;
   }
-
   .item:hover { background: var(--surface2); }
-
-  /* Custom checkbox */
   .item input[type=checkbox] { display: none; }
-
   .cb-box {
-    width: 15px;
-    height: 15px;
-    border: 1px solid var(--text3);
-    border-radius: 2px;
-    flex-shrink: 0;
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 15px; height: 15px; border: 1px solid var(--text3); border-radius: 2px;
+    flex-shrink: 0; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
     transition: border-color 0.2s, background 0.2s;
   }
-
   .cb-box::after {
-    content: '';
-    width: 8px;
-    height: 5px;
-    border-left: 1.5px solid var(--bg);
-    border-bottom: 1.5px solid var(--bg);
-    transform: rotate(-45deg) translateY(-1px);
-    opacity: 0;
-    transition: opacity 0.15s;
+    content: ''; width: 8px; height: 5px;
+    border-left: 1.5px solid var(--bg); border-bottom: 1.5px solid var(--bg);
+    transform: rotate(-45deg) translateY(-1px); opacity: 0; transition: opacity 0.15s;
   }
-
-  .item.checked .cb-box {
-    background: var(--green);
-    border-color: var(--green);
-  }
-
+  .item.checked .cb-box { background: var(--green); border-color: var(--green); }
   .item.checked .cb-box::after { opacity: 1; }
-
-  .item-label {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.45;
-    transition: color 0.2s;
-  }
-
-  .item.checked .item-label {
-    color: var(--text3);
-    text-decoration: line-through;
-    text-decoration-color: var(--text3);
-  }
-
+  .item-label { font-size: 13px; color: var(--text2); line-height: 1.45; transition: color 0.2s; }
+  .item.checked .item-label { color: var(--text3); text-decoration: line-through; text-decoration-color: var(--text3); }
   .opt-tag {
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--gold);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 2px;
-    padding: 1px 5px;
-    flex-shrink: 0;
-    margin-top: 3px;
+    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 2px; padding: 1px 5px; flex-shrink: 0; margin-top: 3px;
   }
+
+  /* ── Meals Sub-dropdown ── */
+  .meals-wrap {
+    grid-column: 1 / -1; border: 1px solid var(--border); border-radius: 5px;
+    margin: 4px 2px 6px; overflow: hidden; background: var(--bg3);
+  }
+  .meals-header {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    cursor: pointer; user-select: none; transition: background 0.15s;
+  }
+  .meals-header:hover { background: var(--surface2); }
+  .meals-title { font-size: 13px; color: var(--text2); flex: 1; }
+  .meals-tally { font-size: 11px; color: var(--text3); letter-spacing: 0.1em; }
+  .meals-tally.complete { color: var(--green); }
+  .meals-chevron { font-size: 10px; color: var(--text3); transition: transform 0.2s; }
+  .meals-chevron.open { transform: rotate(180deg); }
+  .meals-list { padding: 4px 8px 8px; border-top: 1px solid var(--border); }
+  .meal-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 8px; border-radius: 4px; cursor: pointer; transition: background 0.15s;
+  }
+  .meal-item:hover { background: var(--surface2); }
+  .meal-brand { font-size: 10px; letter-spacing: 0.1em; color: var(--gold); text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+  .meal-name { font-size: 13px; color: var(--text2); flex: 1; }
+  .meal-rating { font-size: 11px; color: var(--green); white-space: nowrap; }
+  .meal-item.checked .meal-name { color: var(--text3); text-decoration: line-through; }
+  .meal-item.checked .cb-box { background: var(--green); border-color: var(--green); }
+  .meal-item.checked .cb-box::after { opacity: 1; }
 
   /* ── Footer ── */
-  .footer {
-    text-align: center;
-    padding: 2rem 1rem 3rem;
-    position: relative;
-    z-index: 1;
-  }
+  .footer { text-align: center; padding: 2rem 1rem 3rem; position: relative; z-index: 1; }
+  .footer-trees { display: block; width: 100%; max-width: 500px; margin: 0 auto 1rem; opacity: 0.25; }
+  .footer-text { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text3); }
 
-  .footer-trees {
-    display: block;
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto 1rem;
-    opacity: 0.25;
-  }
-
-  .footer-text {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text3);
-  }
-
-  /* ── Animations ── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Mobile ── */
-  @media (max-width: 540px) {
-    .items-grid { grid-template-columns: 1fr 1fr; }
-    .hero-content { padding: 1.25rem; }
+  /* ════════════════════════════════
+     MOBILE — high contrast light mode
+  ════════════════════════════════ */
+  @media (max-width: 640px) {
+
+    :root {
+      --bg: #f5f2ec;
+      --bg2: #ede9e0;
+      --bg3: #e8e4da;
+      --surface: #ffffff;
+      --surface2: #f0ece3;
+      --border: rgba(60,90,50,0.15);
+      --border2: rgba(60,90,50,0.3);
+      --green: #2a6b38;
+      --green-bright: #3a8a4a;
+      --green-pale: #1f5129;
+      --gold: #8a6010;
+      --text: #1a1a1a;
+      --text2: #2d2d2d;
+      --text3: #666666;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body::before { display: none; }
+
+    /* Hero — compact on mobile */
+    .hero svg.treeline { max-height: 160px; object-fit: cover; }
+    .hero-eyebrow { font-size: 11px; color: #3a8a4a; letter-spacing: 0.25em; }
+    .hero-title { font-size: 2rem; color: #1a1a1a; }
+    .hero-title span { color: #8a6010; }
+    .hero-sub { font-size: 12px; color: #444; }
+
+    /* Hero SVG — invert to light for mobile */
+    .hero svg.treeline rect { fill: #d4e8d4 !important; }
+
+    /* Progress bar */
+    .progress-wrap {
+      background: #ffffff;
+      border-top: 2px solid #2a6b38;
+      border-bottom: 2px solid rgba(60,90,50,0.15);
+      padding: 14px 1rem; gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .progress-track { background: #e0e0e0; height: 6px; }
+    .progress-fill { background: linear-gradient(90deg, #2a6b38, #3a8a4a); }
+    .progress-pct { font-size: 20px; font-weight: 700; color: #2a6b38; font-family: 'Inter', sans-serif; }
+    .progress-label { font-size: 13px; color: #444; font-family: 'Inter', sans-serif; }
+    .reset-btn {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      color: #c0392b; border-color: #c0392b; padding: 7px 14px; letter-spacing: 0;
+    }
+
+    /* Main layout */
+    .main { padding: 1rem 0.75rem 3rem; }
+
+    /* Sections */
+    .section {
+      margin-bottom: 0.75rem; border-radius: 10px;
+      border: 1.5px solid rgba(60,90,50,0.18);
+      background: #ffffff;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .section-header {
+      background: #f8f6f1; padding: 16px 14px; min-height: 56px;
+      border-bottom: 1.5px solid rgba(60,90,50,0.12);
+    }
+    .section-icon { font-size: 22px; width: 26px; }
+    .section-name {
+      font-family: 'Inter', sans-serif; font-size: 17px;
+      font-weight: 600; color: #1a1a1a;
+    }
+    .section-tally { font-size: 13px; color: #888; font-weight: 500; }
+    .section-tally.complete { color: #2a6b38; font-weight: 700; }
+    .section-chevron { font-size: 13px; color: #888; }
+
+    /* Items — single column, large tap targets */
+    .items-grid { grid-template-columns: 1fr; padding: 6px 8px; gap: 2px; }
+
+    .item {
+      padding: 13px 12px; min-height: 52px; border-radius: 8px;
+      align-items: center; gap: 14px;
+    }
+    .item:active { background: #eef5ec; }
+
+    /* Large high-contrast checkbox */
+    .cb-box {
+      width: 24px; height: 24px; border: 2px solid #999; border-radius: 5px;
+      flex-shrink: 0; margin-top: 0;
+    }
+    .cb-box::after {
+      width: 13px; height: 8px;
+      border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff;
+    }
+    .item.checked .cb-box { background: #2a6b38; border-color: #2a6b38; }
+
+    .item-label {
+      font-family: 'Inter', sans-serif; font-size: 16px;
+      font-weight: 500; color: #1a1a1a; line-height: 1.35;
+    }
+    .item.checked .item-label { color: #999; text-decoration-color: #bbb; }
+
+    .opt-tag {
+      font-size: 10px; color: #8a6010; border-color: rgba(138,96,16,0.4);
+      padding: 2px 7px; font-family: 'Inter', sans-serif; font-weight: 600;
+    }
+
+    /* Meals dropdown mobile */
+    .meals-wrap { margin: 6px 0 4px; border-radius: 8px; border: 1.5px solid rgba(60,90,50,0.18); }
+    .meals-header { padding: 13px 12px; min-height: 50px; background: #f8f6f1; }
+    .meals-title {
+      font-family: 'Inter', sans-serif; font-size: 15px;
+      font-weight: 600; color: #1a1a1a;
+    }
+    .meals-tally { font-size: 13px; color: #888; }
+    .meals-tally.complete { color: #2a6b38; }
+    .meals-list { border-top: 1.5px solid rgba(60,90,50,0.12); padding: 6px 8px 10px; }
+    .meal-item { padding: 12px 8px; min-height: 52px; border-radius: 8px; }
+    .meal-brand { font-size: 11px; color: #8a6010; font-family: 'Inter', sans-serif; font-weight: 600; }
+    .meal-name { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; color: #1a1a1a; }
+    .meal-rating { font-size: 13px; color: #2a6b38; }
+    .meal-item.checked .meal-name { color: #999; }
+    .meal-item.checked .cb-box { background: #2a6b38; border-color: #2a6b38; }
+
+    /* Footer */
+    .footer-trees { opacity: 0.15; }
+    .footer-text { color: #888; font-family: 'Inter', sans-serif; }
   }
 </style>
 </head>
@@ -370,17 +348,12 @@
 
 <!-- ══ HERO ══ -->
 <div class="hero">
-  <svg class="treeline" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-    <!-- Sky gradient -->
+  <svg class="treeline desktop-hero" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
     <defs>
       <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#060e08"/>
         <stop offset="60%" stop-color="#0d1a10"/>
         <stop offset="100%" stop-color="#122016"/>
-      </linearGradient>
-      <linearGradient id="moon-glow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%" gradientUnits="objectBoundingBox" id="mg">
-        <stop offset="0%" stop-color="#e2d8a0" stop-opacity="0.18"/>
-        <stop offset="100%" stop-color="#e2d8a0" stop-opacity="0"/>
       </linearGradient>
       <radialGradient id="mg" cx="50%" cy="50%" r="50%">
         <stop offset="0%" stop-color="#e2d8b0" stop-opacity="0.22"/>
@@ -388,88 +361,93 @@
       </radialGradient>
     </defs>
     <rect width="1440" height="320" fill="url(#sky)"/>
-
-    <!-- Moon glow -->
     <ellipse cx="1100" cy="60" rx="90" ry="90" fill="url(#mg)"/>
-    <!-- Moon -->
     <circle cx="1100" cy="60" r="22" fill="#e8dfa8" opacity="0.9"/>
     <circle cx="1108" cy="54" r="17" fill="#0a1509" opacity="0.85"/>
-
-    <!-- Stars -->
     <g fill="#c8d8b0" opacity="0.7">
       <circle cx="120" cy="30" r="1.2"/><circle cx="240" cy="18" r="0.9"/>
       <circle cx="380" cy="42" r="1.1"/><circle cx="510" cy="12" r="0.8"/>
       <circle cx="640" cy="28" r="1.3"/><circle cx="760" cy="8" r="0.9"/>
       <circle cx="890" cy="36" r="1.0"/><circle cx="980" cy="20" r="1.2"/>
       <circle cx="1200" cy="35" r="0.9"/><circle cx="1310" cy="15" r="1.1"/>
-      <circle cx="1380" cy="44" r="0.8"/><circle cx="60" cy="55" r="0.7"/>
-      <circle cx="460" cy="55" r="0.8"/><circle cx="820" cy="48" r="1.0"/>
     </g>
-
-    <!-- Distant mountains -->
     <polygon points="0,220 180,110 360,180 520,90 700,160 860,80 1040,150 1220,70 1440,140 1440,320 0,320" fill="#0c1a0f" opacity="0.9"/>
-
-    <!-- Mid mountains -->
     <polygon points="0,260 120,180 280,230 440,155 600,210 760,148 940,200 1100,145 1260,195 1440,155 1440,320 0,320" fill="#0f1f12"/>
-
-    <!-- Tree line — back row -->
     <g fill="#0e1c11">
-      <!-- Spruces -->
-      <polygon points="0,320 30,240 60,320"/>
-      <polygon points="15,320 30,255 45,320"/>
-      <polygon points="50,320 80,235 110,320"/>
-      <polygon points="65,320 80,250 95,320"/>
-      <polygon points="100,320 132,228 164,320"/>
-      <polygon points="155,320 185,240 215,320"/>
-      <polygon points="205,320 240,222 275,320"/>
-      <polygon points="265,320 300,235 335,320"/>
-      <polygon points="320,320 358,218 396,320"/>
-      <polygon points="385,320 420,232 455,320"/>
-      <polygon points="445,320 482,220 519,320"/>
-      <polygon points="508,320 545,230 582,320"/>
-      <polygon points="570,320 608,215 646,320"/>
-      <polygon points="635,320 672,228 709,320"/>
-      <polygon points="700,320 736,220 772,320"/>
-      <polygon points="760,320 798,212 836,320"/>
-      <polygon points="825,320 862,225 899,320"/>
-      <polygon points="888,320 926,215 964,320"/>
-      <polygon points="950,320 989,228 1028,320"/>
-      <polygon points="1015,320 1054,218 1093,320"/>
-      <polygon points="1080,320 1120,210 1160,320"/>
-      <polygon points="1148,320 1188,222 1228,320"/>
-      <polygon points="1215,320 1256,215 1297,320"/>
-      <polygon points="1282,320 1324,220 1366,320"/>
+      <polygon points="0,320 30,240 60,320"/><polygon points="50,320 80,235 110,320"/>
+      <polygon points="100,320 132,228 164,320"/><polygon points="155,320 185,240 215,320"/>
+      <polygon points="205,320 240,222 275,320"/><polygon points="265,320 300,235 335,320"/>
+      <polygon points="320,320 358,218 396,320"/><polygon points="385,320 420,232 455,320"/>
+      <polygon points="445,320 482,220 519,320"/><polygon points="508,320 545,230 582,320"/>
+      <polygon points="570,320 608,215 646,320"/><polygon points="635,320 672,228 709,320"/>
+      <polygon points="700,320 736,220 772,320"/><polygon points="760,320 798,212 836,320"/>
+      <polygon points="825,320 862,225 899,320"/><polygon points="888,320 926,215 964,320"/>
+      <polygon points="950,320 989,228 1028,320"/><polygon points="1015,320 1054,218 1093,320"/>
+      <polygon points="1080,320 1120,210 1160,320"/><polygon points="1148,320 1188,222 1228,320"/>
+      <polygon points="1215,320 1256,215 1297,320"/><polygon points="1282,320 1324,220 1366,320"/>
       <polygon points="1350,320 1395,210 1440,320"/>
     </g>
-
-    <!-- Tree line — front row (darker, taller) -->
     <g fill="#0a1509">
-      <polygon points="0,320 40,225 80,320"/>
-      <polygon points="20,320 40,240 60,320"/>
-      <polygon points="70,320 112,210 154,320"/>
-      <polygon points="90,320 112,228 134,320"/>
-      <polygon points="140,320 182,200 224,320"/>
-      <polygon points="212,320 258,192 304,320"/>
-      <polygon points="290,320 338,202 386,320"/>
-      <polygon points="368,320 416,195 464,320"/>
-      <polygon points="445,320 496,188 547,320"/>
-      <polygon points="525,320 576,196 627,320"/>
-      <polygon points="605,320 658,185 711,320"/>
-      <polygon points="688,320 742,192 796,320"/>
-      <polygon points="772,320 828,180 884,320"/>
-      <polygon points="856,320 912,188 968,320"/>
-      <polygon points="940,320 998,178 1056,320"/>
-      <polygon points="1028,320 1086,185 1144,320"/>
-      <polygon points="1116,320 1175,175 1234,320"/>
-      <polygon points="1206,320 1266,182 1326,320"/>
-      <polygon points="1298,320 1358,175 1418,320"/>
-      <polygon points="1380,320 1440,180 1440,320"/>
+      <polygon points="0,320 40,225 80,320"/><polygon points="70,320 112,210 154,320"/>
+      <polygon points="140,320 182,200 224,320"/><polygon points="212,320 258,192 304,320"/>
+      <polygon points="290,320 338,202 386,320"/><polygon points="368,320 416,195 464,320"/>
+      <polygon points="445,320 496,188 547,320"/><polygon points="525,320 576,196 627,320"/>
+      <polygon points="605,320 658,185 711,320"/><polygon points="688,320 742,192 796,320"/>
+      <polygon points="772,320 828,180 884,320"/><polygon points="856,320 912,188 968,320"/>
+      <polygon points="940,320 998,178 1056,320"/><polygon points="1028,320 1086,185 1144,320"/>
+      <polygon points="1116,320 1175,175 1234,320"/><polygon points="1206,320 1266,182 1326,320"/>
+      <polygon points="1298,320 1358,175 1418,320"/><polygon points="1380,320 1440,180 1440,320"/>
     </g>
-
-    <!-- Ground fog -->
     <ellipse cx="720" cy="320" rx="900" ry="40" fill="#0d1a10" opacity="0.7"/>
   </svg>
-
+  <!-- Mobile hero: light dawn sky -->
+  <svg class="treeline mobile-hero" viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="dawn" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#c8dfc0"/>
+        <stop offset="50%" stop-color="#ddecd5"/>
+        <stop offset="100%" stop-color="#eef5e8"/>
+      </linearGradient>
+      <radialGradient id="sungl" cx="50%" cy="40%" r="50%">
+        <stop offset="0%" stop-color="#fffbe0" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="#fffbe0" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="800" height="220" fill="url(#dawn)"/>
+    <!-- Sun glow -->
+    <ellipse cx="400" cy="88" rx="120" ry="80" fill="url(#sungl)"/>
+    <!-- Sun -->
+    <circle cx="400" cy="72" r="14" fill="#f5d87a" opacity="0.9"/>
+    <!-- Distant mountains -->
+    <polygon points="0,160 100,90 200,130 320,70 440,110 560,60 680,100 800,65 800,220 0,220" fill="#8fb88a" opacity="0.5"/>
+    <!-- Mid mountains -->
+    <polygon points="0,185 80,130 180,160 300,105 420,145 540,95 660,135 800,100 800,220 0,220" fill="#5a8c5a" opacity="0.7"/>
+    <!-- Back tree line -->
+    <g fill="#3a6b3a" opacity="0.7">
+      <polygon points="0,220 22,170 44,220"/><polygon points="36,220 58,162 80,220"/>
+      <polygon points="72,220 96,155 120,220"/><polygon points="108,220 134,160 160,220"/>
+      <polygon points="148,220 174,152 200,220"/><polygon points="188,220 216,158 244,220"/>
+      <polygon points="228,220 258,150 288,220"/><polygon points="272,220 302,155 332,220"/>
+      <polygon points="316,220 348,148 380,220"/><polygon points="362,220 394,153 426,220"/>
+      <polygon points="408,220 440,147 472,220"/><polygon points="454,220 488,152 522,220"/>
+      <polygon points="502,220 536,148 570,220"/><polygon points="550,220 584,153 618,220"/>
+      <polygon points="600,220 634,146 668,220"/><polygon points="648,220 684,151 720,220"/>
+      <polygon points="698,220 734,148 770,220"/><polygon points="748,220 800,144 800,220"/>
+    </g>
+    <!-- Front tree line -->
+    <g fill="#264d26">
+      <polygon points="0,220 28,155 56,220"/><polygon points="44,220 72,145 100,220"/>
+      <polygon points="88,220 118,138 148,220"/><polygon points="132,220 164,142 196,220"/>
+      <polygon points="178,220 212,134 246,220"/><polygon points="226,220 262,138 298,220"/>
+      <polygon points="276,220 314,132 352,220"/><polygon points="328,220 366,136 404,220"/>
+      <polygon points="380,220 420,130 460,220"/><polygon points="434,220 474,134 514,220"/>
+      <polygon points="488,220 530,129 572,220"/><polygon points="544,220 586,133 628,220"/>
+      <polygon points="600,220 644,128 688,220"/><polygon points="658,220 702,132 746,220"/>
+      <polygon points="718,220 762,127 800,220"/><polygon points="775,220 800,135 800,220"/>
+    </g>
+    <!-- Ground -->
+    <ellipse cx="400" cy="220" rx="500" ry="20" fill="#1e3d1e" opacity="0.3"/>
+  </svg>
   <div class="hero-content">
     <p class="hero-eyebrow">Mild-Weather</p>
     <h1 class="hero-title">Trail <span>Ready</span></h1>
@@ -483,7 +461,7 @@
     <div class="progress-fill" id="pbar"></div>
   </div>
   <span class="progress-pct" id="ppct">0%</span>
-  <span class="progress-label" id="plabel">0 / 0 items packed</span>
+  <span class="progress-label" id="plabel">0 / 0 packed</span>
   <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
 </div>
 
@@ -509,88 +487,101 @@
 
 <script>
 const data = [
-  { name: "Clothing", icon: "👕",
-    items: [
-      {l:"Light shell jacket"},{l:"Shell pants",o:true},{l:"Thermal short sleeves"},
-      {l:"Thermal long sleeve"},{l:"Thermal pants"},{l:"Socks"},
-      {l:"Hiking shorts"},{l:"Underwear"},{l:"Camp shoes"},
-      {l:"Under shorts (supportive)"},{l:"Ball cap / sun hat"},
-      {l:"Bandana(s)"},{l:"Chamois towel",o:true},{l:"Stuff sack with clothes"}
-    ]
-  },
-  { name: "Shelter & Sleep", icon: "⛺",
-    items: [
-      {l:"Tent"},{l:"Sleeping pad(s)"},{l:"Sleeping bag"},
-      {l:"Ground blanket"},{l:"Hammock"},{l:"Trekking poles"}
-    ]
-  },
-  { name: "Safety & Navigation", icon: "🧭",
-    items: [
-      {l:"Whistle (included with pack)"},{l:"First-aid kit / emergency blanket"},
-      {l:"Compass"},{l:"Map"},{l:"Head lamp"},
-      {l:"Spare laces",o:true},{l:"Rope for hanging food bag"}
-    ]
-  },
-  { name: "Hygiene & Leave No Trace", icon: "🌿",
-    items: [
-      {l:"Toilet paper"},{l:"Trowel"},{l:"Garbage bags"},
-      {l:"Zip-loc bags"},{l:"Hand sanitizer"},{l:"Wipes for cleaning"},
-      {l:"Tooth products"},{l:"Deodorant"},{l:"Rose water"},
-      {l:"Moisturizer"}
-    ]
-  },
-  { name: "Sun, Bug & Skin", icon: "☀️",
-    items: [
-      {l:"Sunscreen"},{l:"Bug spray"},{l:"Lip balm"},
-      {l:"Sunglasses"},{l:"Beach towel",o:true}
-    ]
-  },
-  { name: "Water", icon: "💧",
-    items: [
-      {l:"Water bottles / bladder"},{l:"Water purification"},
-      {l:"Backup bladder"},{l:"Duct-taped Nalgene"}
-    ]
-  },
-  { name: "Kitchen & Food", icon: "🔥",
-    items: [
-      {l:"Jet Boil"},{l:"Backup fuel cartridge"},{l:"Titanium pots",o:true},
-      {l:"Cook set",o:true},{l:"Sporks ×2"},{l:"Titanium cup"},
-      {l:"BH and porta-flask"},{l:"Meals"},{l:"Other food stuffs"},
-      {l:"Oysters / pulpo"},{l:"Honey Stinger"},{l:"Chocolate"},
-      {l:"Coffee"},{l:"Wine key"},{l:"Foil"},
-      {l:"Car cooler"},{l:"Lighter / matches + fire starter"}
-    ]
-  },
-  { name: "Health & Medicine", icon: "💊",
-    items: [
-      {l:"Medicine"},{l:"Delta-9 THC"}
-    ]
-  },
-  { name: "Tech & Tools", icon: "🔦",
-    items: [
-      {l:"Solar charger"},{l:"Camera",o:true},{l:"Saw"},{l:"Notebook"}
-    ]
-  },
-  { name: "Entertainment & Misc", icon: "🃏",
-    items: [
-      {l:"Entertainment (cards, book, etc.)"},{l:"Duct tape"}
-    ]
-  }
+  { name:"Clothing", icon:"👕", items:[
+    {l:"Light shell jacket"},{l:"Shell pants",o:true},{l:"Thermal short sleeves"},
+    {l:"Thermal long sleeve"},{l:"Thermal pants"},{l:"Socks"},
+    {l:"Hiking shorts"},{l:"Underwear"},{l:"Camp shoes"},
+    {l:"Under shorts (supportive)"},{l:"Ball cap / sun hat"},
+    {l:"Bandana(s)"},{l:"Chamois towel",o:true},{l:"Stuff sack with clothes"}
+  ]},
+  { name:"Shelter & Sleep", icon:"⛺", items:[
+    {l:"Tent"},{l:"Sleeping pad(s)"},{l:"Sleeping bag"},
+    {l:"Ground blanket"},{l:"Hammock + straps"},{l:"Trekking poles"},{l:"Backpacking chairs (REI Ultra-Light)"}
+  ]},
+  { name:"Safety & Navigation", icon:"🧭", items:[
+    {l:"Whistle (included with pack)"},{l:"First-aid kit / emergency blanket"},
+    {l:"Compass"},{l:"Map"},{l:"Head lamp"},
+    {l:"Spare laces",o:true},{l:"Rope for hanging food bag"},{l:"Waterproof pack cover"}
+  ]},
+  { name:"Hygiene & Leave No Trace", icon:"🌿", items:[
+    {l:"Toilet paper"},{l:"Trowel"},{l:"Garbage bags"},
+    {l:"Zip-loc bags"},{l:"Hand sanitizer"},{l:"Wipes for cleaning"},
+    {l:"Tooth products"},{l:"Deodorant"},{l:"Rose water"},{l:"Moisturizer"}
+  ]},
+  { name:"Sun, Bug & Skin", icon:"☀️", items:[
+    {l:"Sunscreen"},{l:"Bug spray"},{l:"Lip balm"},
+    {l:"Sunglasses"},{l:"Beach towel",o:true}
+  ]},
+  { name:"Water", icon:"💧", items:[
+    {l:"Water bottles / bladder"},{l:"Water purification"},
+    {l:"Backup bladder"},{l:"Duct-taped Nalgene"},{l:"Steripen specialty batteries"}
+  ]},
+  { name:"Kitchen & Food", icon:"🔥", items:[
+    {l:"Jet Boil"},{l:"Backup fuel cartridge"},{l:"Titanium pots",o:true},
+    {l:"Cook set",o:true},{l:"Sporks ×2"},{l:"Titanium cup"},
+    {l:"BH and porta-flask"},{l:"Other food stuffs"},
+    {l:"Oysters / pulpo"},{l:"Honey Stinger"},{l:"Chocolate"},
+    {l:"Coffee"},{l:"Wine key"},{l:"Foil"},
+    {l:"Car cooler"},{l:"Lighter / matches + fire starter"},{l:"UCO Strike & Go matches"}
+  ]},
+  { name:"Health & Medicine", icon:"💊", items:[
+    {l:"Medicine"},{l:"Delta-9 THC"}
+  ]},
+  { name:"Tech & Tools", icon:"🔦", items:[
+    {l:"Solar charger"},{l:"Camera",o:true},{l:"Yard crosscut saw (replaceable blades)"},
+    {l:"Scissored multi-tool"},{l:"Notebook"},{l:"Binoculars",o:true},{l:"Bluetooth speaker",o:true}
+  ]},
+  { name:"Entertainment & Misc", icon:"🃏", items:[
+    {l:"Entertainment (cards, book, etc.)"},{l:"Duct tape"}
+  ]}
 ];
 
-let checks = {};
-let collapsed = {};
+const meals = [
+  {brand:"Backpacker's Pantry", name:"Pad Thai Chicken ◀ preferred", rating:"★★★★★"},
+  {brand:"Backpacker's Pantry", name:"Pad Thai (original)",           rating:"★★★★★"},
+  {brand:"Mountain House",      name:"Beef Stroganoff",               rating:"★★★★★"},
+  {brand:"Backpacker's Pantry", name:"Peach Blueberry Crisp",         rating:"★★★★★"},
+  {brand:"Mountain House",      name:"Chicken & Dumplings",           rating:""},
+  {brand:"Backpacker's Pantry", name:"Chana Masala",                  rating:""},
+  {brand:"Good To-Go",          name:"Thai Curry",                    rating:""},
+  {brand:"Mountain House",      name:"Breakfast Skillet",             rating:""},
+];
 
-function totalItems() { return data.reduce((s,c)=>s+c.items.length,0); }
-function totalChecked() { return Object.values(checks).filter(Boolean).length; }
+let checks = {}, collapsed = {}, mealChecks = {}, mealsOpen = false;
+
+function totalItems()   { return data.reduce((s,c)=>s+c.items.length,0) + meals.length; }
+function totalChecked() { return Object.values(checks).filter(Boolean).length + Object.values(mealChecks).filter(Boolean).length; }
 
 function updateProgress() {
   const total = totalItems(), done = totalChecked();
   const pct = total ? Math.round(done/total*100) : 0;
   document.getElementById('pbar').style.width = pct + '%';
   document.getElementById('ppct').textContent = pct + '%';
-  document.getElementById('plabel').textContent = done + ' / ' + total + ' items packed';
+  document.getElementById('plabel').textContent = done + ' / ' + total + ' packed';
 }
+
+function mealsHTML() {
+  const done = meals.filter((_,i)=>mealChecks[i]).length;
+  const allDone = done === meals.length;
+  return `<div class="meals-wrap">
+    <div class="meals-header" onclick="toggleMeals()">
+      <span style="font-size:18px">🍜</span>
+      <span class="meals-title">Meals</span>
+      <span class="meals-tally${allDone?' complete':''}">${done}/${meals.length}</span>
+      <span class="meals-chevron${mealsOpen?' open':''}">▼</span>
+    </div>
+    ${mealsOpen ? `<div class="meals-list">${meals.map((m,i)=>`
+      <div class="meal-item${mealChecks[i]?' checked':''}" onclick="toggleMeal(${i})">
+        <div class="cb-box"></div>
+        <span class="meal-brand">${m.brand}</span>
+        <span class="meal-name">${m.name}</span>
+        <span class="meal-rating">${m.rating}</span>
+      </div>`).join('')}</div>` : ''}
+  </div>`;
+}
+
+function toggleMeals() { mealsOpen = !mealsOpen; render(); }
+function toggleMeal(i) { mealChecks[i] = !mealChecks[i]; render(); }
 
 function render() {
   const cont = document.getElementById('sections');
@@ -599,11 +590,9 @@ function render() {
     const isOpen = !collapsed[ci];
     const done = cat.items.filter((_,ii) => checks[ci+'_'+ii]).length;
     const allDone = done === cat.items.length;
-
     const sec = document.createElement('div');
     sec.className = 'section';
     sec.style.animationDelay = (0.08 + ci * 0.07) + 's';
-
     sec.innerHTML = `
       <div class="section-header" onclick="toggleSection(${ci})">
         <span class="section-icon">${cat.icon}</span>
@@ -612,36 +601,24 @@ function render() {
         <span class="section-chevron${isOpen?' open':''}">▼</span>
       </div>
       ${isOpen ? `<div class="items-grid">${cat.items.map((it,ii)=>{
-        const id = ci+'_'+ii;
-        const checked = !!checks[id];
+        const id = ci+'_'+ii, checked = !!checks[id];
         return `<div class="item${checked?' checked':''}" onclick="toggle('${id}')">
           <input type="checkbox" ${checked?'checked':''}>
           <div class="cb-box"></div>
           <span class="item-label">${it.l}</span>
           ${it.o?'<span class="opt-tag">opt</span>':''}
         </div>`;
-      }).join('')}</div>` : ''}
+      }).join('')}${ci===6?mealsHTML():''}</div>` : ''}
     `;
     cont.appendChild(sec);
   });
   updateProgress();
 }
 
-function toggleSection(ci) {
-  collapsed[ci] = !collapsed[ci];
-  render();
-}
-
-function toggle(id) {
-  checks[id] = !checks[id];
-  render();
-}
-
+function toggleSection(ci) { collapsed[ci] = !collapsed[ci]; render(); }
+function toggle(id) { checks[id] = !checks[id]; render(); }
 function resetAll() {
-  if (confirm('Reset all items?')) {
-    checks = {};
-    render();
-  }
+  if (confirm('Reset all items?')) { checks = {}; mealChecks = {}; render(); }
 }
 
 render();
