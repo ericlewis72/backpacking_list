@@ -342,10 +342,67 @@
     .footer-trees { opacity: 0.15; }
     .footer-text { color: #888; font-family: 'Inter', sans-serif; }
   }
+
+  /* ════════════════════════════════
+     TABS
+  ════════════════════════════════ */
+  .tab-bar {
+    position: relative; z-index: 10;
+    display: flex; gap: 0;
+    background: #0a1509;
+    border-bottom: 1px solid rgba(90,140,80,0.25);
+    padding: 0 1.5rem;
+  }
+  .tab-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #506b4a; background: transparent; border: none;
+    padding: 14px 22px; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn:hover { color: #8fad88; }
+  .tab-btn.active { color: #a8d49c; border-bottom-color: #5a8c50; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Car Camping section colors — same dark palette */
+  .cc-note {
+    font-size: 12px; color: #506b4a; font-style: italic;
+    padding: 1rem 0 0.25rem; letter-spacing: 0.05em;
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 640px) {
+    .tab-bar {
+      background: #ffffff;
+      border-bottom: 2px solid rgba(60,90,50,0.15);
+      padding: 0 0.5rem;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.05em;
+      color: #888; padding: 14px 16px; white-space: nowrap;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-btn.active { color: #2a6b38; border-bottom-color: #2a6b38; }
+    .cc-note { font-family: 'Inter', sans-serif; font-size: 13px; color: #888; }
+  }
+
 </style>
 </head>
 <body>
 
+<!-- ══ TAB BAR ══ -->
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('backpacking', this)">⛺ Backpacking</button>
+  <button class="tab-btn" onclick="switchTab('carcamping', this)">🚙 Car Camping</button>
+  <button class="tab-btn" onclick="switchTab('fishing', this)">🎣 Fishing</button>
+</nav>
+
+<!-- ══ BACKPACKING PANEL ══ -->
+<div class="tab-panel active" id="panel-backpacking">
 <!-- ══ HERO ══ -->
 <div class="hero">
   <svg class="treeline desktop-hero" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
@@ -469,6 +526,18 @@
 <main class="main" id="sections"></main>
 
 <!-- ══ FOOTER ══ -->
+</div><!-- /panel-backpacking -->
+
+<!-- ══ CAR CAMPING PANEL ══ -->
+<div class="tab-panel" id="panel-carcamping">
+  <div class="main" id="cc-sections"></div>
+</div>
+
+<!-- ══ FISHING PANEL ══ -->
+<div class="tab-panel" id="panel-fishing">
+  <div class="main" id="fish-sections"></div>
+</div>
+
 <footer class="footer">
   <svg class="footer-trees" viewBox="0 0 500 80" xmlns="http://www.w3.org/2000/svg">
     <g fill="#3a6040">
@@ -513,23 +582,23 @@ const data = [
     {l:"Sunglasses"},{l:"Beach towel",o:true}
   ]},
   { name:"Water", icon:"💧", items:[
-    {l:"Water bottles / bladder"},{l:"Water purification"},
-    {l:"Backup bladder"},{l:"Duct-taped Nalgene"},{l:"Steripen specialty batteries"}
+    {l:"Water bottles / bladder"},{l:"Steripen + specialty batteries"},{l:"MSR filter (turbid/sedimented water)"},
+    {l:"Backup bladder"},{l:"Duct-taped Nalgene"}
   ]},
   { name:"Kitchen & Food", icon:"🔥", items:[
     {l:"Jet Boil"},{l:"Backup fuel cartridge"},{l:"Titanium pots",o:true},
     {l:"Cook set",o:true},{l:"Sporks ×2"},{l:"Titanium cup"},
     {l:"BH and porta-flask"},{l:"Other food stuffs"},
     {l:"Oysters / pulpo"},{l:"Honey Stinger"},{l:"Chocolate"},
-    {l:"Coffee"},{l:"Wine key"},{l:"Foil"},
+    {l:"Coffee"},{l:"Wine key"},{l:"Red wine"},{l:"Foil"},
     {l:"Car cooler"},{l:"Lighter / matches + fire starter"},{l:"UCO Strike & Go matches"}
   ]},
   { name:"Health & Medicine", icon:"💊", items:[
-    {l:"Medicine"},{l:"Delta-9 THC"}
+    {l:"Medicine"}
   ]},
   { name:"Tech & Tools", icon:"🔦", items:[
     {l:"Solar charger"},{l:"Camera",o:true},{l:"Yard crosscut saw (replaceable blades)"},
-    {l:"Scissored multi-tool"},{l:"Notebook"},{l:"Binoculars",o:true},{l:"Bluetooth speaker",o:true}
+    {l:"Scissored multi-tool"},{l:"Notebook"},{l:"Binoculars",o:true},{l:"Bluetooth speaker",o:true},{l:"Work gloves"}
   ]},
   { name:"Entertainment & Misc", icon:"🃏", items:[
     {l:"Entertainment (cards, book, etc.)"},{l:"Duct tape"}
@@ -537,14 +606,18 @@ const data = [
 ];
 
 const meals = [
-  {brand:"Backpacker's Pantry", name:"Pad Thai Chicken ◀ preferred", rating:"★★★★★"},
+  {brand:"Peak Refuel",         name:"Peach Cobbler",               rating:"★★★★★"},
+  {brand:"Mountain House",      name:"Beef Stroganoff ◀ #1",          rating:"★★★★★"},
+  {brand:"Backpacker's Pantry", name:"Pad Thai Chicken ◀ #2",         rating:"★★★★★"},
   {brand:"Backpacker's Pantry", name:"Pad Thai (original)",           rating:"★★★★★"},
-  {brand:"Mountain House",      name:"Beef Stroganoff",               rating:"★★★★★"},
+  {brand:"Backpacker's Pantry", name:"Drunken Noodles",               rating:"★★★★★"},
+  {brand:"Backpacker's Pantry", name:"Thai Chicken Yellow Curry",     rating:"★★★★★"},
   {brand:"Backpacker's Pantry", name:"Peach Blueberry Crisp",         rating:"★★★★★"},
-  {brand:"Mountain House",      name:"Chicken & Dumplings",           rating:""},
+  {brand:"Readywise",           name:"Chicken & Dumplings",           rating:"★★★★★"},
+  {brand:"Backpacker's Pantry", name:"Black Beans w/ Coconut Rice",   rating:"★★"},
+  {brand:"Mountain House",      name:"Breakfast Skillet",             rating:""},
   {brand:"Backpacker's Pantry", name:"Chana Masala",                  rating:""},
   {brand:"Good To-Go",          name:"Thai Curry",                    rating:""},
-  {brand:"Mountain House",      name:"Breakfast Skillet",             rating:""},
 ];
 
 let checks = {}, collapsed = {}, mealChecks = {}, mealsOpen = false;
@@ -622,6 +695,160 @@ function resetAll() {
 }
 
 render();
+
+
+/* ══════════════════════════════════
+   CAR CAMPING DATA
+══════════════════════════════════ */
+const ccData = [
+  { name:"Camp Kitchen", icon:"🍳", items:[
+    {l:"Coleman two-burner camp stove"},{l:"Propane bottles (×2)"},{l:"Lighter + backup lighter"},
+    {l:"Cast-iron skillet"},{l:"Medium saucepan with lid"},{l:"Fire/camp cooking grate"},
+    {l:"Long tongs"},{l:"Spatula"},{l:"Large cooking spoon"},{l:"Sharp chef/utility knife"},
+    {l:"Small cutting board"},{l:"Can/bottle opener"},{l:"Aluminum foil"},{l:"Cooking spray"},
+    {l:"Vegetable/peanut oil"},{l:"Paper towels"},{l:"Ziplocks (quart + gallon)"},
+    {l:"Food storage containers"},{l:"Dish soap + sponge/scrubber"},{l:"Small wash basin/tub"},
+    {l:"Kitchen towel"},{l:"Trash bags"},{l:"Heavy-duty foil (fish/fire cooking)"}
+  ]},
+  { name:"Eating & Drinking", icon:"🥂", items:[
+    {l:"Plates/bowls"},{l:"Real forks/spoons/knives"},{l:"Insulated mugs"},
+    {l:"Beer/wine/drink cups"},{l:"Corkscrew"},{l:"Cooler"},
+    {l:"Second small cooler or insulated bag (drinks)"},{l:"Ice / frozen water bottles"},
+    {l:"Large water jug (several gallons)"}
+  ]},
+  { name:"Comfort", icon:"🪑", items:[
+    {l:"Camp chairs (full-size)"},{l:"Small folding side table",o:true},{l:"Lantern"},
+    {l:"Headlamps (from backpacking kit)"},{l:"Extra blanket/quilt"},{l:"Full-size pillows"},
+    {l:"Camp towels"},{l:"Clothesline + clips"},{l:"Bug spray"},{l:"Thermacell",o:true},
+    {l:"Sunscreen"},{l:"Extra toilet paper"},{l:"Wet wipes"},{l:"Hand sanitizer"},
+    {l:"Shower sandals"},{l:"Shower kit"},{l:"Quarters/cash for showers"},
+    {l:"Small doormat/rug for tent entrance"}
+  ]},
+  { name:"Fire", icon:"🔥", items:[
+    {l:"Fire gloves"},{l:"Hatchet"},{l:"Bow saw"},{l:"Fire starters"},
+    {l:"Long lighter"},{l:"Newspaper/cardboard starter material"},{l:"Camp grate"}
+  ]},
+  { name:"4Runner — Rolling the Dice Kit", icon:"🚙", items:[
+    {l:"Paper Michigan/UP map"},{l:"Offline Google Maps downloaded"},
+    {l:"DNR campground locations saved"},{l:"Cash + smaller bills"},
+    {l:"Power bank(s)"},{l:"USB car chargers"},{l:"Jumper pack"},
+    {l:"Tire inflator"},{l:"Basic tool kit"},
+    {l:"First-aid kit (beyond backpacking mini-kit)"},{l:"Extra drinking water"},
+    {l:"Small folding shovel"},{l:"Extra tarp"},{l:"Paracord"},
+    {l:"Duct tape"},{l:"Contractor trash bags"},{l:"Recreation Passport (vehicle)"}
+  ]}
+];
+
+/* ══════════════════════════════════
+   FISHING DATA
+══════════════════════════════════ */
+const fishData = [
+  { name:"Tackle — Spinning & General", icon:"🎣", items:[
+    {l:"Collapsible spinning rod/reel"},{l:"Second spinning rod/reel (Michelle)"},
+    {l:"Tackle box"},{l:"Small spinners (Mepps/Panther Martin/Rooster Tail)"},
+    {l:"Small spoons"},{l:"Jig heads"},{l:"Small paddletails/twister tails"},
+    {l:"Ned-rig stuff"},{l:"Bobbers/slip floats"},{l:"Hooks"},{l:"Split shot"},
+    {l:"Live bait container (if buying worms)"},
+    {l:"Hemostats/pliers"},{l:"Line cutters"},{l:"Landing net"},
+    {l:"Stringer or small dedicated catch cooler"},{l:"Tape measure"}
+  ]},
+  { name:"Fly Fishing", icon:"🪰", items:[
+    {l:"4-piece 4-weight fly rod"},{l:"Fly reel/line"},
+    {l:"Smallmouth/perch flies for 4-weight"}
+  ]},
+  { name:"Angler Gear", icon:"🕶️", items:[
+    {l:"Polarized sunglasses"},{l:"Wading shoes/water shoes"},
+    {l:"Fishing licenses downloaded/screenshotted"},
+    {l:"2026 Michigan regulations downloaded to phones"}
+  ]},
+  { name:"Fish Cleaning & Cooking", icon:"🐟", items:[
+    {l:"Fillet knife"},{l:"Small sharpening stone/steel"},{l:"Disposable gloves"},
+    {l:"Fish-cleaning board"},{l:"Gallon Ziplocks"},{l:"Dedicated fish towel/rag"},
+    {l:"Lemon"},{l:"Butter"},{l:"Oil"},{l:"Salt"},{l:"Black pepper"},
+    {l:"Creole seasoning"},{l:"Garlic"},{l:"Masa harina 🌽"},{l:"Small container regular flour"},
+    {l:"Hot sauce"},{l:"Instant-read thermometer",o:true}
+  ]}
+];
+
+/* ══════════════════════════════════
+   TAB SWITCHING
+══════════════════════════════════ */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'carcamping' && !window._ccRendered) { renderCC(); window._ccRendered = true; }
+  if (name === 'fishing'    && !window._fishRendered) { renderFish(); window._fishRendered = true; }
+}
+
+/* ── Generic section renderer ── */
+function renderSections(data, containerId, checksObj, collObj) {
+  const cont = document.getElementById(containerId);
+  if (!cont) return;
+  cont.innerHTML = '';
+  data.forEach(function(cat, ci) {
+    var isOpen = !collObj[ci];
+    var done = cat.items.filter(function(_,ii){ return checksObj[ci+'_'+ii]; }).length;
+    var allDone = done === cat.items.length;
+    var sec = document.createElement('div');
+    sec.className = 'section';
+    sec.style.animationDelay = (0.08 + ci * 0.07) + 's';
+    var itemsHTML = '';
+    if (isOpen) {
+      cat.items.forEach(function(it, ii) {
+        var id = ci+'_'+ii;
+        var checked = !!checksObj[id];
+        itemsHTML += '<div class="item' + (checked?' checked':'') + '" onclick="toggleGenericItem(event,\''+containerId+'\','+ci+','+ii+')">'
+          + '<div class="cb-box"></div>'
+          + '<span class="item-label">'+it.l+'</span>'
+          + (it.o ? '<span class="opt-tag">opt</span>' : '')
+          + '</div>';
+      });
+    }
+    sec.innerHTML = '<div class="section-header" onclick="toggleGenericSection(event,\''+containerId+'\','+ci+')">'
+      + '<span class="section-icon">'+cat.icon+'</span>'
+      + '<span class="section-name">'+cat.name+'</span>'
+      + '<span class="section-tally'+(allDone?' complete':'')+'">'+done+'/'+cat.items.length+'</span>'
+      + '<span class="section-chevron'+(isOpen?' open':'')+'">▼</span>'
+      + '</div>'
+      + (isOpen ? '<div class="items-grid">'+itemsHTML+'</div>' : '');
+    cont.appendChild(sec);
+  });
+}
+
+function getCtx(containerId) {
+  if (containerId === 'cc-sections')   return { data: ccData,   checks: window.ccChecks,   coll: window.ccColl };
+  if (containerId === 'fish-sections') return { data: fishData, checks: window.fishChecks, coll: window.fishColl };
+  return null;
+}
+
+function toggleGenericSection(e, containerId, ci) {
+  e.stopPropagation();
+  var ctx = getCtx(containerId);
+  ctx.coll[ci] = !ctx.coll[ci];
+  renderSections(ctx.data, containerId, ctx.checks, ctx.coll);
+}
+
+function toggleGenericItem(e, containerId, ci, ii) {
+  e.stopPropagation();
+  var ctx = getCtx(containerId);
+  var id = ci+'_'+ii;
+  ctx.checks[id] = !ctx.checks[id];
+  renderSections(ctx.data, containerId, ctx.checks, ctx.coll);
+}
+
+window.ccChecks = {}; window.ccColl = {};
+window.fishChecks = {}; window.fishColl = {};
+window.ccData = ccData;
+window.fishData = fishData;
+
+function renderCC()   { renderSections(ccData,   "cc-sections",   window.ccChecks,   window.ccColl); }
+function renderFish() { renderSections(fishData, "fish-sections", window.fishChecks, window.fishColl); }
+
+
+
+
 </script>
 </body>
 </html>
